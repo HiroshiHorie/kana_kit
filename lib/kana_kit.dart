@@ -105,6 +105,15 @@ class KanaKit {
     return input.chars.every(_isCharHiragana);
   }
 
+  /// Tests if [input] contains any hiragana character.
+  ///
+  /// The [input] `String` cannot be null or empty.
+  bool hasHiragana(String input) {
+    assert(input.isNotEmpty);
+
+    return input.chars.any(_isCharHiragana);
+  }
+
   /// Tests if [input] consists entirely of katakana characters.
   ///
   /// The [input] `String` cannot be null or empty.
@@ -119,6 +128,15 @@ class KanaKit {
     assert(input.isNotEmpty);
 
     return input.chars.every(_isCharKatakana);
+  }
+
+  /// Tests if [input] contains any katakana character.
+  ///
+  /// The [input] `String` cannot be null or empty.
+  bool hasKatakana(String input) {
+    assert(input.isNotEmpty);
+
+    return input.chars.any(_isCharKatakana);
   }
 
   /// Tests if [input] consists entirely of kanji characters.
@@ -136,6 +154,15 @@ class KanaKit {
     assert(input.isNotEmpty);
 
     return input.chars.every(_isCharKanji);
+  }
+
+  /// Tests if [input] contains any kanji character.
+  ///
+  /// The [input] `String` cannot be null or empty.
+  bool hasKanji(String input) {
+    assert(input.isNotEmpty);
+
+    return input.chars.any(_isCharKanji);
   }
 
   /// Tests if [input] contains a mix of romaji and kana.
@@ -191,16 +218,14 @@ class KanaKit {
       toRomaji: toRomaji,
       destinationIsRomaji: true,
     );
-    final romajiTokens =
-        _MappingParser(config.romanization.kanaToRomajiMap).apply(hiragana);
+    final romajiTokens = _MappingParser(config.romanization.kanaToRomajiMap).apply(hiragana);
 
     return romajiTokens.map((romajiToken) {
       final start = romajiToken.start;
       final end = romajiToken.end;
       final romaji = romajiToken.value;
 
-      final makeUpperCase =
-          config.upcaseKatakana && isKatakana(input.substring(start, end));
+      final makeUpperCase = config.upcaseKatakana && isKatakana(input.substring(start, end));
 
       if (makeUpperCase) {
         return romaji.toUpperCase();
@@ -230,16 +255,14 @@ class KanaKit {
       return input;
     }
 
-    final kanaTokens = _MappingParser(config.romanization.romajiToKanaMap)
-        .apply(input.toLowerCase());
+    final kanaTokens = _MappingParser(config.romanization.romajiToKanaMap).apply(input.toLowerCase());
 
     return kanaTokens.map((kanaToken) {
       final start = kanaToken.start;
       final end = kanaToken.end;
       final kana = kanaToken.value;
 
-      final enforceKatakana =
-          input.substring(start, end).chars.every(_isCharUpperCase);
+      final enforceKatakana = input.substring(start, end).chars.every(_isCharUpperCase);
 
       return enforceKatakana ? _hiraganaToKatakana(kana) : kana;
     }).join();
@@ -302,9 +325,7 @@ class KanaKit {
 
     final isSingleChar = input.length == 1;
 
-    if (isMixed(input) ||
-        isRomaji(input) ||
-        (isSingleChar && _isCharEnglishPunctuation(input))) {
+    if (isMixed(input) || isRomaji(input) || (isSingleChar && _isCharEnglishPunctuation(input))) {
       final hiragana = toKana(input.toLowerCase());
       return _hiraganaToKatakana(hiragana);
     }
